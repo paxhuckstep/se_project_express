@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const userRouter = require("./routes/user")
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -13,6 +14,8 @@ mongoose
     console.error(e);
   });
 
+  app.use("/", userRouter);
+
 app.listen(PORT, () => {
-  console.log("stuff");
+  console.log(`Server is running on port ${PORT}`);
 });
