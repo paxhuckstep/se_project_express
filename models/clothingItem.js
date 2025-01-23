@@ -14,6 +14,7 @@ const clothingItem = new mongoose.Schema({
       message: "You must enter valid URL",
     }
   },
+  isLiked: {boolean} // is boolean acceptable ???
 });
 
 module.exports = mongoose.model("item", clothingItem);
