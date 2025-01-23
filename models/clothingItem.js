@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const userSchema = new mongoose.Schema({
+const clothingItem = new mongoose.Schema({
   name: { type: String, required: true, minlength: 2, maxlength: 30 },
-  avatar: {
+  weather: { type: String, required: true, enum: ["hot", "warm", "cold"] },
+  imageURL: {
     type: String,
     required: [true, "The avatar field is required."],
     validate: {
@@ -15,4 +16,4 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("item", clothingItemSchema);
+module.exports = mongoose.model("item", clothingItem);
