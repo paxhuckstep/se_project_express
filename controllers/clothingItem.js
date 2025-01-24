@@ -1,4 +1,4 @@
-const clothingItem = require('../models/clothingItem')
+const Item = require('../models/clothingItem') // or const clothingItem
 
 const createItem = (req, res) => {
   console.log(req)
@@ -6,7 +6,7 @@ const createItem = (req, res) => {
 
   const {name, weather, imageURL} = req.body;
 
-  clothingItem.create({name, weather, imageURL}).then((item) =>{
+  Item.create({name, weather, imageURL}).then((item) =>{
     console.log(item);
     res.send({data:item})
   }).catch((e) => {
@@ -19,8 +19,9 @@ const deleteItem (req, res) => {
   console.log(req.body);
 
   const clothingItemId = req.params;
-  clothingItem.findById(clothingItemId).orFail().then((clothingItem) => {
+  Item.findById(clothingItemId).orFail().then((clothingItem) => {
     //delete clothing item from database
+    clothingItem.remove(); // ?????
     res.status(//successful deletion #
       )
   }).catch((err) => {
@@ -59,4 +60,4 @@ const unlikeItem () => {
 
 
 
-module.exports = { createItem, getItems, deleteItem }
+module.exports = { createItem, getItems, deleteItem, likeItem, unlikeItem }

@@ -1,6 +1,6 @@
 const User = require("../models/user");
 
-//GET /users
+//User.find  how does User work??
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
