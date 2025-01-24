@@ -15,9 +15,16 @@ mongoose
   });
 
 app.use(express.json());
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: "6793f3464c26502dd5fa807b",
+  };
+  next();
+});
+
 app.use("/", mainRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-

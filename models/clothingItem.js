@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const user = require("./user");
 
 const clothingItem = new mongoose.Schema({
   name: { type: String, required: true, minlength: 2, maxlength: 30 },
   weather: { type: String, required: true, enum: ["hot", "warm", "cold"] },
-  imageURL: {
+  imageUrl: {
     type: String,
     required: [true, "The avatar field is required."],
     validate: {
@@ -12,9 +13,18 @@ const clothingItem = new mongoose.Schema({
         return validator.isURL(value);
       },
       message: "You must enter valid URL",
-    }
+    },
   },
-  isLiked: {boolean} // is boolean acceptable ??? or "enum: [true, false]"" or other...
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: [true, "The owner url is required"],
+    ref: user,
+  },
+  likes: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: user }],
+    default: [],
+  },
+  createdAt: { type: Date, default: Date.now() },
 });
 
-module.exports = mongoose.model("item", clothingItem);
+module.exports = mongoose.model("Item", clothingItem);

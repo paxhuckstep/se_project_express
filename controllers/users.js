@@ -1,6 +1,5 @@
 const User = require("../models/user");
 
-//User.find  how does User work??
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
@@ -13,6 +12,8 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
+  console.log(req, res);
+  console.log(req.body);
   const { name, avatar } = req.body;
 
   User.create({ name, avatar })
@@ -29,24 +30,23 @@ const createUser = (req, res) => {
 };
 
 const getUser = (req, res) => {
-const { userId } = req.params;
-User.findById(userId)
-.orFail()
-.then((user) => {
-  res.status(200).send(user);
-})
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail()
+    .then((user) => {
+      res.status(200).send(user);
+    })
 
-.catch((err) => {
-  console.error(err);
-  if (err.name === "DocumentNotFoundError") {
-    // return res.status(400).send({ message: err.message });
-  } else (err.name === "CastError")
-  {
-
-  }
-  return res.status(500).send({ message: err.message });
-});
-}
-
+    .catch((err) => {
+      console.error(err.name);
+      if (err.name === "DocumentNotFoundError") {
+        return res.status(404).send({ message: err.message });
+      }
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: "invalidID" });
+      }
+      return res.status(500).send({ message: err.message });
+    });
+};
 
 module.exports = { getUsers, createUser, getUser };
