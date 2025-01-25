@@ -6,16 +6,13 @@ const getUsers = (req, res) => {
       res.status(200).send(users);
     })
     .catch((err) => {
-      console.error(err);
+      console.error(err.name);
       return res.status(500).send({ message: err.message });
     });
 };
 
 const createUser = (req, res) => {
-  console.log(req, res);
-  console.log(req.body);
   const { name, avatar } = req.body;
-
   User.create({ name, avatar })
     .then((user) => {
       res.status(201).send(user);
