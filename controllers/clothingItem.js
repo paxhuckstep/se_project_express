@@ -32,11 +32,9 @@ const getItems = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  clothingItemId = req.params.itemId; // right?, how does .params work?
-  userLiking = req.user._id; //where does req.user._id come from?
   Item.findByIdAndUpdate(
-    clothingItemId,
-    { $addToSet: { likes: userLiking } },
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
@@ -49,11 +47,9 @@ const likeItem = (req, res) => {
 };
 
 const unlikeItem = (req, res) => {
-  clothingItemId = req.params.itemId;
-  userUnliking = req.user._id;
   Item.findByIdAndUpdate(
-    clothingItemId,
-    { $pull: { likes: userUnliking } },
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
