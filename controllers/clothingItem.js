@@ -1,9 +1,7 @@
 const Item = require("../models/clothingItem");
+const { handleError } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  console.log(req);
-  console.log(req.body);
-
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
@@ -12,35 +10,22 @@ const createItem = (req, res) => {
       res.send({ data: item });
     })
     .catch((err) => {
-      console.log(err.name);
-      if (err.name === "ValidationError") {
-        return res.status(400).send({ message: err.message });
-      }
-      res.status(500).send({ message: "Error from", err });
+      handleError(err, res);
     });
 };
 
 const deleteItem = (req, res) => {
-  const clothingItemId = req.params.itemId;
-  console.log(clothingItemId);
-  Item.findByIdAndDelete(clothingItemId.itemId)
+  Item.findByIdAndDelete(req.params.itemId)
     .orFail()
     .then(() => {
-      res.status(200);
+      res.send({ message: "Item has been deleted" });
     })
     .catch((err) => {
-      console.error(err.name);
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: "invalidID" });
-      }
-      return res.status(500).send({ message: err.message });
+      handleError(err, res);
     });
 };
 
 const getItems = (req, res) => {
-  console.log(req);
-  console.log(req.body);
-
   Item.find({}).then((clothingItems) => {
     res.status(200).send(clothingItems);
   });
@@ -59,11 +44,7 @@ const likeItem = (req, res) => {
       res.send(clothingItem);
     })
     .catch((err) => {
-      console.error(err.name);
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: "invalidID" });
-      }
-      return res.status(500).send({ message: err.message });
+      handleError(err, res);
     });
 };
 
@@ -80,11 +61,7 @@ const unlikeItem = (req, res) => {
       res.send(clothingItem);
     })
     .catch((err) => {
-      console.error(err.name);
-      if (err.name === "CastError") {
-        return res.status(400).send({ message: "invalidID" });
-      }
-      return res.status(500).send({ message: err.message });
+      handleError(err, res);
     });
 };
 
