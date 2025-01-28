@@ -27,8 +27,10 @@ const deleteItem = (req, res) => {
 
 const getItems = (req, res) => {
   Item.find({}).then((clothingItems) => {
-    res.status(200).send(clothingItems);
-  });
+    res.send(clothingItems);
+  }).catch((err) => {
+    handleError(err, res);
+  });;
 };
 
 const likeItem = (req, res) => {
