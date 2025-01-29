@@ -30,7 +30,7 @@ const getItems = (req, res) => {
     res.send(clothingItems);
   }).catch((err) => {
     handleError(err, res);
-  });;
+  });
 };
 
 const likeItem = (req, res) => {
