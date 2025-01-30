@@ -18,10 +18,15 @@ const createUser = (req, res) => {
   bcrypt
     .hash(password, 8)
     .then((hashedPassword) => {
-      User.create({ name, avatar, email, password: hashedPassword }); //password isn't getting sent to database
+      User.create({ name, avatar, email, password: hashedPassword });
     })
     .then((user) => {
-      res.status(201).send(user);
+      res.status(201).send({
+        _id: user._id,
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -30,8 +35,7 @@ const createUser = (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-  // const { userId } = req.params;
-  // turns into { userId } = req.user.... from authentication middleware
+  const { userId } = req.user;
   User.findById(userId)
     .orFail()
     .then((user) => {
@@ -42,11 +46,16 @@ const getCurrentUser = (req, res) => {
     });
 };
 
-updateUser = (req, res) => {
-  { userId } = req.user;
-  User.findByIdAndUpdate(userId,  { $addToSet: { req.body.name, req.body.avatar } }, // instead of $addToSet I need a $replaceToSet ?? type thing
-    { new: true })
-}
+const updateUser = (req, res) => {
+  const { _id } = req.user;
+  const { name, avatar } = req.body;
+
+  User.findByIdAndUpdate(
+    _id,
+    { name, avatar },
+    { new: true, runValidators: true }
+  );
+};
 
 const login = (req, res) => {
   const { email, password } = req.body;
@@ -64,11 +73,4 @@ const login = (req, res) => {
     });
 };
 
-
-// //ya what
-// const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-//   expiresIn: "7d",
-// });
-// console.log(token);
-
-module.exports = { getUsers, createUser, getUser, login };
+module.exports = { getUsers, createUser, getCurrentUser, updateUser, login };

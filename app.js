@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const mainRouter = require("./routes/index");
 
 const app = express();
@@ -15,15 +16,7 @@ mongoose
   });
 
 app.use(express.json());
-
-
-// DELETED BECAUSE WE HAVE AUTHORIZATION NOW
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: "6793f3464c26502dd5fa807b",
-//   };
-//   next();
-// });
+app.use(cors());
 
 app.use("/", mainRouter);
 

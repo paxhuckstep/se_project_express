@@ -1,4 +1,5 @@
 const Item = require("../models/clothingItem");
+const { FORBIDDEN } = require("../utils/constants");
 const { handleError } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -15,22 +16,31 @@ const createItem = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  Item.findByIdAndDelete(req.params.itemId)
+  Item.findById(req.params.itemId)
     .orFail()
-    .then(() => {
-      res.send({ message: "Item has been deleted" });
-    })
-    .catch((err) => {
-      handleError(err, res);
+    .then((item) => {
+      if (!item.owner.equals(req.user._id)) {
+        return res.status(FORBIDDEN).send("Cannot delete other user's items");
+      } else {
+        Item.deleteOne(item)
+          .then(() => {
+            res.send({ message: "Item has been deleted" });
+          })
+          .catch((err) => {
+            handleError(err, res);
+          });
+      }
     });
 };
 
 const getItems = (req, res) => {
-  Item.find({}).then((clothingItems) => {
-    res.send(clothingItems);
-  }).catch((err) => {
-    handleError(err, res);
-  });
+  Item.find({})
+    .then((clothingItems) => {
+      res.send(clothingItems);
+    })
+    .catch((err) => {
+      handleError(err, res);
+    });
 };
 
 const likeItem = (req, res) => {

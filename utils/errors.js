@@ -1,4 +1,4 @@
-const { BAD_REQUEST, NOT_FOUND, DEFAULT} = require("./constants");
+const { BAD_REQUEST, NOT_FOUND, DEFAULT } = require("./constants");
 
 function handleError(err, res) {
   if (err.name === "DocumentNotFoundError") {
@@ -8,9 +8,11 @@ function handleError(err, res) {
     return res.status(BAD_REQUEST).send({ message: err.message });
   }
   if (err.name === "CastError") {
-    return res.status(BAD_REQUEST).send({ message: "Invalid Data"});
+    return res.status(BAD_REQUEST).send({ message: "Invalid Data" });
   }
-  return res.status(DEFAULT).send({ message: "An error has occured on the server" });
+  return res
+    .status(DEFAULT)
+    .send({ message: "An error has occured on the server" });
 }
 
 module.exports = { handleError };
