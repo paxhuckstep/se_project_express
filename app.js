@@ -16,12 +16,14 @@ mongoose
 
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "6793f3464c26502dd5fa807b",
-  };
-  next();
-});
+
+// DELETED BECAUSE WE HAVE AUTHORIZATION NOW
+// app.use((req, res, next) => {
+//   req.user = {
+//     _id: "6793f3464c26502dd5fa807b",
+//   };
+//   next();
+// });
 
 app.use("/", mainRouter);
 

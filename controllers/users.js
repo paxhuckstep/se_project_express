@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const { handleError } = require("../utils/errors");
 const bcrypt = require("bcryptjs");
+const { JWT_SECRET } = require("../utils/config");
 
 const getUsers = (req, res) => {
   User.find({})
@@ -28,8 +29,9 @@ const createUser = (req, res) => {
     });
 };
 
-const getUser = (req, res) => {
-  const { userId } = req.params;
+const getCurrentUser = (req, res) => {
+  // const { userId } = req.params;
+  // turns into { userId } = req.user.... from authentication middleware
   User.findById(userId)
     .orFail()
     .then((user) => {
@@ -39,6 +41,12 @@ const getUser = (req, res) => {
       handleError(err, res);
     });
 };
+
+updateUser = (req, res) => {
+  { userId } = req.user;
+  User.findByIdAndUpdate(userId,  { $addToSet: { req.body.name, req.body.avatar } }, // instead of $addToSet I need a $replaceToSet ?? type thing
+    { new: true })
+}
 
 const login = (req, res) => {
   const { email, password } = req.body;
@@ -56,7 +64,7 @@ const login = (req, res) => {
     });
 };
 
-// const { JWT_SECRET } = require("../utils/config");
+
 // //ya what
 // const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
 //   expiresIn: "7d",
