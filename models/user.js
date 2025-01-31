@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "E-mail is required"],
-    unique: [true, "that e-mail is unavailable, please try another"], //I can send dublicate email addresses :/
+    unique: [true, "that e-mail is unavailable, please try another"],
     validate: {
       validator(value) {
         return validator.isEmail(value);

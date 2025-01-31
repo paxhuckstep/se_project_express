@@ -21,15 +21,14 @@ const deleteItem = (req, res) => {
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
         return res.status(FORBIDDEN).send("Cannot delete other user's items");
-      } else {
-        Item.deleteOne(item)
-          .then(() => {
-            res.send({ message: "Item has been deleted" });
-          })
-          .catch((err) => {
-            handleError(err, res);
-          });
       }
+     return Item.deleteOne(item)
+        .then(() => {
+          res.send({ message: "Item has been deleted" });
+        })
+        .catch((err) => {
+          handleError(err, res);
+        });
     });
 };
 

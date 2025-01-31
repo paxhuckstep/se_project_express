@@ -1,6 +1,6 @@
+const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const { handleError } = require("../utils/errors");
-const bcrypt = require("bcryptjs");
 const { JWT_SECRET } = require("../utils/config");
 
 const getUsers = (req, res) => {
@@ -15,23 +15,20 @@ const getUsers = (req, res) => {
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-  bcrypt
-    .hash(password, 8)
-    .then((hashedPassword) => {
-      User.create({ name, avatar, email, password: hashedPassword });
-    })
-    .then((user) => {
-      res.status(201).send({
-        _id: user._id,
-        name: user.name,
-        avatar: user.avatar,
-        email: user.email,
+  bcrypt.hash(password, 8).then((hashedPassword) => {
+    User.create({ name, avatar, email, password: hashedPassword })
+      .then((user) => {
+        res.status(201).send({
+          _id: user._id,
+          name: user.name,
+          avatar: user.avatar,
+          email: user.email,
+        });
+      })
+      .catch((err) => {
+        handleError(err, res);
       });
-    })
-    .catch((err) => {
-      console.log(err);
-      handleError(err, res);
-    });
+  });
 };
 
 const getCurrentUser = (req, res) => {
@@ -54,7 +51,11 @@ const updateUser = (req, res) => {
     _id,
     { name, avatar },
     { new: true, runValidators: true }
-  );
+  ).then((user) => {
+    res.send(user);
+  }).catch((err) => {
+    handleError(err, res);
+  });
 };
 
 const login = (req, res) => {
