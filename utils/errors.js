@@ -19,7 +19,7 @@ function handleError(err, res) {
   if (err.name === "MongooseError") {
     return res.status(CONFLICT_ERROR).send({ message: "E-mail unavailable" });
   }
-  if ((err = "Error: Incorrect email or password")) {
+  if (err === "Error: Incorrect email or password") {
     return res
       .status(BAD_REQUEST)
       .send({ message: "Incorrect email or password" });

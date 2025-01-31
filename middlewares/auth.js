@@ -1,5 +1,5 @@
-const { JWT_SECRET } = require("../utils/config");
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 const { UNAUTHORIZED } = require("../utils/constants");
 
 const auth = (req, res, next) => {
@@ -9,7 +9,6 @@ const auth = (req, res, next) => {
   }
   const token = authorization.replace("Bearer ", "");
   let payload;
-
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch {
@@ -18,7 +17,5 @@ const auth = (req, res, next) => {
   req.user = payload;
   next();
 };
-
-//
 
 module.exports = { auth };

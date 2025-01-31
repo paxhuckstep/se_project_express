@@ -26,10 +26,10 @@ const deleteItem = (req, res) => {
       }
       Item.deleteOne(item)
         .then(() => {
-          res.send({ message: "Item has been deleted" });
+          return res.send({ message: "Item has been deleted" });
         })
         .catch((err) => {
-          handleError(err, res);
+          return handleError(err, res);
         });
     })
     .catch((err) => {
