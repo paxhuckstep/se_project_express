@@ -20,15 +20,20 @@ const deleteItem = (req, res) => {
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
-        return res.status(FORBIDDEN).send("Cannot delete other user's items");
+        return res
+          .status(FORBIDDEN)
+          .send({ message: "Cannot delete other user's items" });
       }
-     return Item.deleteOne(item)
+      Item.deleteOne(item)
         .then(() => {
           res.send({ message: "Item has been deleted" });
         })
         .catch((err) => {
           handleError(err, res);
         });
+    })
+    .catch((err) => {
+      handleError(err, res);
     });
 };
 

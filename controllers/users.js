@@ -1,7 +1,9 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 const { handleError } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
+const { CONFLICT_ERROR } = require("../utils/constants");
 
 const getUsers = (req, res) => {
   User.find({})
@@ -15,25 +17,32 @@ const getUsers = (req, res) => {
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-  bcrypt.hash(password, 8).then((hashedPassword) => {
-    User.create({ name, avatar, email, password: hashedPassword })
-      .then((user) => {
-        res.status(201).send({
-          _id: user._id,
-          name: user.name,
-          avatar: user.avatar,
-          email: user.email,
-        });
-      })
-      .catch((err) => {
-        handleError(err, res);
+  User.findOne({ email }).then((existingUser) => {
+    if (existingUser) {
+      res.status(CONFLICT_ERROR).send({ message: "E-mail unavailable" });
+      return;
+    } else {
+      bcrypt.hash(password, 8).then((hashedPassword) => {
+        User.create({ name, avatar, email, password: hashedPassword })
+          .then((user) => {
+            res.send({
+              _id: user._id,
+              name: user.name,
+              avatar: user.avatar,
+              email: user.email,
+            });
+          })
+          .catch((err) => {
+            handleError(err, res);
+          });
       });
+    }
   });
 };
 
 const getCurrentUser = (req, res) => {
-  const { userId } = req.user;
-  User.findById(userId)
+  const { _id } = req.user;
+  User.findById(_id)
     .orFail()
     .then((user) => {
       res.send(user);
@@ -51,26 +60,26 @@ const updateUser = (req, res) => {
     _id,
     { name, avatar },
     { new: true, runValidators: true }
-  ).then((user) => {
-    res.send(user);
-  }).catch((err) => {
-    handleError(err, res);
-  });
+  )
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      handleError(err, res);
+    });
 };
 
 const login = (req, res) => {
   const { email, password } = req.body;
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.send(token);
+      res.send({ token });
     })
     .catch((err) => {
-      handleError(err);
-      res.status(401).send({ message: err.message });
+      handleError(err, res);
     });
 };
 

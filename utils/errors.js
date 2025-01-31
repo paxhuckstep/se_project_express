@@ -1,4 +1,10 @@
-const { BAD_REQUEST, NOT_FOUND, DEFAULT, CONFLICT_ERROR } = require("./constants");
+const {
+  BAD_REQUEST,
+  NOT_FOUND,
+  DEFAULT,
+  CONFLICT_ERROR,
+  UNAUTHORIZED,
+} = require("./constants");
 
 function handleError(err, res) {
   if (err.name === "DocumentNotFoundError") {
@@ -11,7 +17,18 @@ function handleError(err, res) {
     return res.status(BAD_REQUEST).send({ message: "Invalid Data" });
   }
   if (err.name === "MongooseError") {
-    return res.status(CONFLICT_ERROR).send({message: "E-mail unavailable"})
+    return res.status(CONFLICT_ERROR).send({ message: "E-mail unavailable" });
+  }
+  if ((err = "Error: Incorrect email or password")) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Incorrect email or password" });
+  }
+  if (err.startsWith("Error: Illegal arguments: string, undefined")) {
+    return res.status();
+  }
+  if (err.name === "Error") {
+    return res.status(UNAUTHORIZED).send({ message: err.message });
   }
   return res
     .status(DEFAULT)
