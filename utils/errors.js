@@ -7,6 +7,7 @@ const {
 } = require("./constants");
 
 function handleError(err, res) {
+  console.log(err);
   if (err.name === "DocumentNotFoundError") {
     return res.status(NOT_FOUND).send({ message: err.message });
   }
@@ -19,16 +20,13 @@ function handleError(err, res) {
   if (err.name === "MongooseError") {
     return res.status(CONFLICT_ERROR).send({ message: "E-mail unavailable" });
   }
-  if (err === "Error: Incorrect email or password") {
+  if (err.message === "Incorrect email or password") {
     return res
-      .status(BAD_REQUEST)
+      .status(UNAUTHORIZED)
       .send({ message: "Incorrect email or password" });
   }
-  if (err.startsWith("Error: Illegal arguments: string, undefined")) {
-    return res.status();
-  }
-  if (err.name === "Error") {
-    return res.status(UNAUTHORIZED).send({ message: err.message });
+  if (err.message === "Illegal arguments: string, undefined") {
+    return res.status(BAD_REQUEST).send({message: err.message});
   }
   return res
     .status(DEFAULT)

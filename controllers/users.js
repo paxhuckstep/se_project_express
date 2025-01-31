@@ -3,17 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const { handleError } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
-const { CONFLICT_ERROR } = require("../utils/constants");
-
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.send(users);
-    })
-    .catch((err) => {
-      handleError(err, res);
-    });
-};
+const { CONFLICT_ERROR, BAD_REQUEST } = require("../utils/constants");
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
@@ -36,6 +26,8 @@ const createUser = (req, res) => {
           });
       });
     }
+  }).catch((err) => {
+    handleError(err, res);
   });
 };
 
@@ -70,6 +62,9 @@ const updateUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
+  if(!email || !password) {
+    return res.status(BAD_REQUEST).send({message: "Missing e-mail or password"})
+  }
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -82,4 +77,4 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { getUsers, createUser, getCurrentUser, updateUser, login };
+module.exports = { createUser, getCurrentUser, updateUser, login };
