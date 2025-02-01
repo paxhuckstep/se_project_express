@@ -16,7 +16,7 @@ const createItem = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  Item.findById(req.params.itemId)
+  return Item.findById(req.params.itemId)
     .orFail()
     .then((item) => {
       if (!item.owner.equals(req.user._id)) {
@@ -24,12 +24,12 @@ const deleteItem = (req, res) => {
           .status(FORBIDDEN)
           .send({ message: "Cannot delete other user's items" });
       }
-      Item.deleteOne(item)
+      return Item.deleteOne(item)
         .then(() => {
           return res.send({ message: "Item has been deleted" });
         })
         .catch((err) => {
-          return handleError(err, res);
+          handleError(err, res);
         });
     })
     .catch((err) => {
