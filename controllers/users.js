@@ -45,14 +45,16 @@ const getCurrentUser = (req, res) => {
 
 const updateUser = (req, res) => {
   const { _id } = req.user;
-  const { name, avatar } = req.body;
+  const { newName, newAvatar } = req.body;
+  console.log(req.body);
 
   User.findByIdAndUpdate(
     _id,
-    { name, avatar },
+    { newName, newAvatar },
     { new: true, runValidators: true }
   )
     .then((user) => {
+      console.log("heres the user being sent", user);
       res.send(user);
     })
     .catch((err) => {
