@@ -7,28 +7,30 @@ const { CONFLICT_ERROR, BAD_REQUEST } = require("../utils/constants");
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-  User.findOne({ email }).then((existingUser) => {
-    if (existingUser) {
-      res.status(CONFLICT_ERROR).send({ message: "E-mail unavailable" });
-    } else {
-      bcrypt.hash(password, 8).then((hashedPassword) => {
-        User.create({ name, avatar, email, password: hashedPassword })
-          .then((user) => {
-            res.send({
-              _id: user._id,
-              name: user.name,
-              avatar: user.avatar,
-              email: user.email,
+  User.findOne({ email })
+    .then((existingUser) => {
+      if (existingUser) {
+        res.status(CONFLICT_ERROR).send({ message: "E-mail unavailable" });
+      } else {
+        bcrypt.hash(password, 8).then((hashedPassword) => {
+          User.create({ name, avatar, email, password: hashedPassword })
+            .then((user) => {
+              res.send({
+                _id: user._id,
+                name: user.name,
+                avatar: user.avatar,
+                email: user.email,
+              });
+            })
+            .catch((err) => {
+              handleError(err, res);
             });
-          })
-          .catch((err) => {
-            handleError(err, res);
-          });
-      });
-    }
-  }).catch((err) => {
-    handleError(err, res);
-  });
+        });
+      }
+    })
+    .catch((err) => {
+      handleError(err, res);
+    });
 };
 
 const getCurrentUser = (req, res) => {
@@ -50,7 +52,7 @@ const updateUser = (req, res) => {
 
   User.findByIdAndUpdate(
     _id,
-    { newName, newAvatar },
+    { name: newName, avatar: newAvatar },
     { new: true, runValidators: true }
   )
     .then((user) => {
@@ -64,8 +66,10 @@ const updateUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
-  if(!email || !password) {
-    return res.status(BAD_REQUEST).send({message: "Missing e-mail or password"})
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Missing e-mail or password" });
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
