@@ -7,7 +7,6 @@ const {
 } = require("./constants");
 
 function handleError(err, res) {
-  console.log(err);
   if (err.name === "DocumentNotFoundError") {
     return res.status(NOT_FOUND).send({ message: err.message });
   }
@@ -26,7 +25,7 @@ function handleError(err, res) {
       .send({ message: "Incorrect email or password" });
   }
   if (err.message === "Illegal arguments: string, undefined") {
-    return res.status(BAD_REQUEST).send({message: err.message});
+    return res.status(BAD_REQUEST).send({ message: err.message });
   }
   return res
     .status(DEFAULT)
