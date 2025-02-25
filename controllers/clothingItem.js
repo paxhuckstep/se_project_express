@@ -15,7 +15,7 @@ const createItem = (req, res) => {
     });
 };
 
-const deleteItem = (req, res) => {
+const deleteItem = (req, res, next) => {
   return Item.findById(req.params.itemId)
     .orFail()
     .then((item) => {
@@ -28,26 +28,24 @@ const deleteItem = (req, res) => {
         .then(() => {
           return res.send({ message: "Item has been deleted" });
         })
-        .catch((err) => {
-          handleError(err, res);
-        });
+        .catch(next);
     })
     .catch((err) => {
       handleError(err, res);
     });
 };
 
-const getItems = (req, res) => {
+const getItems = (req, res, next) => {
   Item.find({})
     .then((clothingItems) => {
       res.send(clothingItems);
     })
     .catch((err) => {
-      handleError(err, res);
+      handleError(err, res, next);
     });
 };
 
-const likeItem = (req, res) => {
+const likeItem = (req, res, next) => {
   Item.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
@@ -58,7 +56,7 @@ const likeItem = (req, res) => {
       res.send(clothingItem);
     })
     .catch((err) => {
-      handleError(err, res);
+      handleError(err, res, next);
     });
 };
 

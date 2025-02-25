@@ -4,8 +4,9 @@ const User = require("../models/user");
 const { handleError } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 const { CONFLICT_ERROR, BAD_REQUEST } = require("../utils/constants");
+const BadRequestError = require("../errors/bad-request-error");
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   User.findOne({ email })
     .then((existingUser) => {
@@ -23,17 +24,17 @@ const createUser = (req, res) => {
               });
             })
             .catch((err) => {
-              handleError(err, res);
+              handleError(err, res, next);
             });
         });
       }
     })
     .catch((err) => {
-      handleError(err, res);
+      handleError(err, res, next);
     });
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const { _id } = req.user;
   User.findById(_id)
     .orFail()
@@ -41,11 +42,11 @@ const getCurrentUser = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      handleError(err, res);
+      handleError(err, res, next);
     });
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   const { _id } = req.user;
   const { newName, newAvatar } = req.body;
 
@@ -58,17 +59,12 @@ const updateUser = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      handleError(err, res);
+      handleError(err, res, next);
     });
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return res
-      .status(BAD_REQUEST)
-      .send({ message: "Missing e-mail or password" });
-  }
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -77,7 +73,7 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      handleError(err, res);
+      handleError(err, res, next);
     });
 };
 
