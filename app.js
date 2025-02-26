@@ -28,6 +28,7 @@ app.use(helmet())
 app.use("/", mainRouter);
 app.use(requestLogger);
 app.use(routes);
+app.use(errorLogger);
 app.use(errors());
 app.use(errorHandler);
 
