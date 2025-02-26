@@ -3,7 +3,10 @@ const clothingItem = require("./clothingItem");
 const userRouter = require("./users");
 const { NOT_FOUND } = require("../utils/constants");
 const { createUser, login } = require("../controllers/users");
-const { validateLoginAttempt, validateNewUserData } = require("../middlewares/validation");
+const {
+  validateLoginAttempt,
+  validateNewUserData,
+} = require("../middlewares/validation");
 
 router.post("/signin", validateLoginAttempt, login);
 router.post("/signup", validateNewUserData, createUser);
