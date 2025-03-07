@@ -1,8 +1,9 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+
 const User = require("../models/user");
+const {createJWT} = require('../utils/jwt');
 const { handleError } = require("../utils/errors");
-const { JWT_SECRET } = require("../utils/config");
+
 const { CONFLICT_ERROR, BAD_REQUEST } = require("../utils/constants");
 const BadRequestError = require("../errors/bad-request-error");
 
@@ -16,11 +17,16 @@ const createUser = (req, res, next) => {
         bcrypt.hash(password, 8).then((hashedPassword) => {
           User.create({ name, avatar, email, password: hashedPassword })
             .then((user) => {
+              const token = createJWT(user._id);
               res.send({
-                _id: user._id,
-                name: user.name,
-                avatar: user.avatar,
-                email: user.email,
+                user: {
+
+                  _id: user._id,
+                  name: user.name,
+                  avatar: user.avatar,
+                  email: user.email,
+                },
+                token
               });
             })
             .catch((err) => {
@@ -67,9 +73,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
-        expiresIn: "7d",
-      });
+      const token = createJWT(user._id);
       res.send({ token });
     })
     .catch((err) => {

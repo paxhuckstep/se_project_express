@@ -11,6 +11,7 @@ const ConflictError = require("../errors/conflict-error");
 const UnauthorizedError = require("../errors/unauthorized-error");
 
 function handleError(err, res, next) {
+  console.log(err);
   if (err.name === "DocumentNotFoundError") {
     return next(new NotFoundError(err.message));
   }
