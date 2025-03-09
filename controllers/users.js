@@ -1,18 +1,17 @@
 const bcrypt = require("bcryptjs");
-
 const User = require("../models/user");
-const {createJWT} = require('../utils/jwt');
+const { createJWT } = require("../utils/jwt");
 const { handleError } = require("../utils/errors");
-
-const { CONFLICT_ERROR, BAD_REQUEST } = require("../utils/constants");
-const BadRequestError = require("../errors/bad-request-error");
+// const { CONFLICT_ERROR, BAD_REQUEST } = require("../utils/constants");
+// const BadRequestError = require("../errors/bad-request-error");
+const ConflictError = require("../errors/conflict-error");
 
 const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   User.findOne({ email })
     .then((existingUser) => {
       if (existingUser) {
-        res.status(CONFLICT_ERROR).send({ message: "E-mail unavailable" });
+        return next(new ConflictError("E-mail unavailable"));
       } else {
         bcrypt.hash(password, 8).then((hashedPassword) => {
           User.create({ name, avatar, email, password: hashedPassword })
@@ -20,13 +19,12 @@ const createUser = (req, res, next) => {
               const token = createJWT(user._id);
               res.send({
                 user: {
-
                   _id: user._id,
                   name: user.name,
                   avatar: user.avatar,
                   email: user.email,
                 },
-                token
+                token,
               });
             })
             .catch((err) => {

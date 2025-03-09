@@ -29,7 +29,7 @@ const validateCardBody = celebrate({
 
 const validateItemId = celebrate({
   params: Joi.object().keys({
-    postId: Joi.string().alphanum().length(24).messages({
+    itemId: Joi.string().alphanum().length(24).messages({
       "string.length": "the ID must be 24 characters long",
       "string.alphanum":
         "the id must be just letters and numbers, no special characters",
@@ -75,12 +75,12 @@ const validateNewUserData = celebrate({
 
 const validateUpdateUserData = celebrate({
   body: Joi.object().keys({
-    newName: Joi.string().required().min(2).max(30).messages({
+    name: Joi.string().required().min(2).max(30).messages({
       "string.min": "name must be at least 2 characters long",
       "string.max": "name can't be longer than 30 characters",
       "string.empty": "name field is requried",
     }),
-    newAvatar: Joi.string().required().custom(validateUrl).messages({
+    avatar: Joi.string().required().custom(validateUrl).messages({
       "string.empty": "The imageUrl field must be filled in",
       "string.uri": "the imageUrl field must be a valid url",
     }),
