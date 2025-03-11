@@ -58,7 +58,7 @@ const likeItem = (req, res, next) => {
     });
 };
 
-const unlikeItem = (req, res) => {
+const unlikeItem = (req, res, next) => {
   Item.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },
@@ -69,7 +69,7 @@ const unlikeItem = (req, res) => {
       res.send(clothingItem);
     })
     .catch((err) => {
-      handleError(err, res);
+      handleError(err, res, next);
     });
 };
 
