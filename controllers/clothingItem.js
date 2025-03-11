@@ -1,6 +1,5 @@
 const ForbiddenError = require("../errors/forbidden-error");
 const Item = require("../models/clothingItem");
-const { FORBIDDEN } = require("../utils/constants");
 const { handleError } = require("../utils/errors");
 
 const createItem = (req, res, next) => {

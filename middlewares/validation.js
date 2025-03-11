@@ -87,6 +87,7 @@ const validateUpdateUserData = celebrate({
   }),
 });
 
+
 module.exports = {
   validateCardBody,
   validateItemId,

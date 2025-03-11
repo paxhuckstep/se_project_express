@@ -1,11 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const { errors } = require("celebrate");
 const cors = require("cors");
 const helmet = require("helmet");
 const mainRouter = require("./routes/index");
 const { errorHandler } = require("./middlewares/error-handler");
-const { errors } = require("celebrate");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
 // const limiter = require("./middlewares/rateLimit");
 
@@ -33,7 +33,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 app.use("/", mainRouter);
- //app.use(router);
+ // app.use(router);
  app.use(errorLogger);
  app.use(errors());
  app.use(errorHandler);
